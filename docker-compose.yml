@@ -1,0 +1,22 @@
+services:
+  shop_management:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shop_management_web
+    container_name: shop_management_web
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  dev:
+    image: cirrusci/flutter:latest
+    container_name: shop_management_dev
+    working_dir: /app
+    volumes:
+      - .:/app:cached
+    ports:
+      - "5000:5000"
+    environment:
+      - FLUTTER_SUPPRESS_ANALYTICS=true
+    command: bash -lc "flutter pub get && flutter run -d web-server --web-hostname=0.0.0.0 --web-port=5000"

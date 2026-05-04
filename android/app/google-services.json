@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "456374654862",
+    "project_id": "shop-management-system-e67d8",
+    "storage_bucket": "shop-management-system-e67d8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:456374654862:android:6b70caa7c1a29a6fdcf6df",
+        "android_client_info": {
+          "package_name": "com.example.shop_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "456374654862-h7sieoadt11vr7bbfkmcuteumndcaejv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4y5U2RhlvJVOWVg8EOYd63CrtT3IAk_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "456374654862-h7sieoadt11vr7bbfkmcuteumndcaejv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "456374654862-5aqcd2ibmlhll310lq0m65cmsr40da9j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopManagement"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
