@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/admin_controller.dart';
 import '../../../core/models/user_model.dart';
@@ -15,7 +16,7 @@ class AdminUsersPage extends StatelessWidget {
         title: const Text("User Management"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.go("/dashboard"),
         ),
       ),
 
