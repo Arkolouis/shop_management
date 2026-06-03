@@ -5,12 +5,14 @@ class Sale {
   final double total;
   final DateTime date;
   final List<Map<String, dynamic>> items;
+  final String? paymentMethod;
 
   Sale({
     required this.id,
     required this.total,
     required this.date,
     required this.items,
+    this.paymentMethod,
   });
 
   factory Sale.fromFirestore(Map<String, dynamic> data, String id) {
@@ -41,6 +43,7 @@ class Sale {
       total: (data['total'] as num).toDouble(),
       date: parsedDate,
       items: List<Map<String, dynamic>>.from(data['items'] ?? []),
+      paymentMethod: data['paymentMethod'] as String?,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_management/controllers/auth_controller.dart';
 import 'package:shop_management/ui/pages/forgotpassword/forgot_password_page.dart';
 import '../../widgets/custum_texfield.dart';
 
@@ -9,20 +10,27 @@ class LoginPage extends StatelessWidget {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
   final ValueNotifier<bool> isLoading = ValueNotifier(false);
 
   Future<void> login(BuildContext context) async {
     isLoading.value = true;
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+      final authController = context.read<AuthController>();
+      authController.emailController.text = emailController.text.trim();
+      authController.passwordController.text = passwordController.text.trim();
 
-      if (context.mounted) {
-        context.go('/dashboard');
+      final error = await authController.login();
+      if (error != null) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Login failed: $error")));
+        }
+      } else {
+        if (context.mounted) {
+          context.go('/dashboard');
+        }
       }
     } catch (e) {
       if (context.mounted) {
@@ -58,28 +66,28 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              /// Email
               AppTextField(
                 label: "Email",
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(labelText: "Email Address"),
               ),
 
               const SizedBox(height: 16),
 
-              /// Password
               AppTextField(
                 label: "Password",
+
                 controller: passwordController,
                 obscure: true,
                 keyboardType: TextInputType.text,
                 textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(labelText: "Password"),
               ),
 
               const SizedBox(height: 24),
 
-              /// Login Button
               ValueListenableBuilder(
                 valueListenable: isLoading,
                 builder: (context, loading, _) {
@@ -97,7 +105,6 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// Forgot password
               TextButton(
                 onPressed: () => resetPassword(context),
                 child: const Text("Forgot Password?"),

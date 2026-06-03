@@ -1,0 +1,56 @@
+A Flutter web shop management system with role-based access control for three user types — admin, manager, and staff.
+
+Tech Stack
+
+Flutter — cross-platform UI framework used to build the web app
+Firebase Auth — handles user login, signup, and session management
+Cloud Firestore — NoSQL database storing products, sales, and user roles
+Provider — state management for real-time UI updates
+GoRouter — navigation with role-based route protection
+
+
+Features
+
+Role-based access — admin sees everything, manager sees products/sales/reports, staff only sees sales
+Product management — add, edit, delete products with images
+Sales system — cart-based point of sale with stock validation
+Reports page — live sales history with total revenue
+Dashboard — live stats updated in real time from Firestore
+User management — admin can manage user accounts
+
+
+Deployment Process
+
+Wrote a Dockerfile that uses a two-stage build:
+
+Stage 1 uses the Flutter Docker image to compile the app with flutter build web --release
+Stage 2 uses Nginx Alpine to serve the compiled files
+
+
+Wrote an nginx.conf configured to handle Flutter web routing — all routes redirect to index.html so GoRouter works correctly
+Pushed the code to GitHub including the Dockerfile and nginx config
+SSH'd into the Ubuntu 22.04 VM provided by the supervisor
+Cloned the repository from GitHub onto the server
+Built and ran the Docker container using docker-compose up -d which:
+
+Pulled the Flutter and Nginx base images
+Compiled the Flutter web app inside Docker
+Started an Nginx server serving the app on port 8080
+
+
+Verified deployment by accessing the app at http://192.168.68.96:8080
+
+
+Why Docker
+
+Consistent environment — the app builds the same way on any machine
+No Flutter installation needed on the server — everything runs inside the container
+Easy to update — pull new code, rebuild the image, restart the container
+Isolated — the app runs independently without affecting other services on the server
+
+
+How to Update the App in Future
+1. Make changes locally
+2. Push to GitHub
+3. On server: git pull
+4. Rebuild: docker-compose up --build -d shop_management

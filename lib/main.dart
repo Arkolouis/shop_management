@@ -13,7 +13,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // ✅ Create AuthController ONCE here
   final authController = AuthController();
 
   runApp(
@@ -36,7 +35,6 @@ class ShopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Router gets the exact same instance as Provider
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: createRouter(authController),

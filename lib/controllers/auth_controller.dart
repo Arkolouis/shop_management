@@ -12,6 +12,9 @@ class AuthController extends ChangeNotifier {
 
   User? user;
   String? role;
+  String? userName;
+  String? _preservedEmail;
+  String? _preservedPassword;
 
   bool isLoading = false;
   bool roleLoading = false;
@@ -24,7 +27,7 @@ class AuthController extends ChangeNotifier {
         await loadUserRole();
       } else {
         role = null;
-        roleLoading = false; 
+        roleLoading = false;
       }
 
       notifyListeners();
@@ -44,11 +47,12 @@ class AuthController extends ChangeNotifier {
         role = null;
       } else {
         role = doc.data()?['role'] as String?;
+        userName = doc.data()?['name'] as String?;
       }
     } catch (e) {
       role = null;
     } finally {
-      roleLoading = false; 
+      roleLoading = false;
       notifyListeners();
     }
   }
@@ -62,6 +66,9 @@ class AuthController extends ChangeNotifier {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+
+      _preservedEmail = emailController.text.trim();
+      _preservedPassword = passwordController.text.trim();
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -106,11 +113,38 @@ class AuthController extends ChangeNotifier {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
+  Future<T> runWithPreservedSession<T>(Future<T> Function() action) async {
+    final previousUid = _auth.currentUser?.uid;
+    final preservedEmail = _preservedEmail;
+    final preservedPassword = _preservedPassword;
+
+    final result = await action();
+
+    if (previousUid != null &&
+        _auth.currentUser?.uid != previousUid &&
+        preservedEmail != null &&
+        preservedPassword != null) {
+      try {
+        await _auth.signInWithEmailAndPassword(
+          email: preservedEmail,
+          password: preservedPassword,
+        );
+      } catch (e) {
+        debugPrint('Failed to restore admin session: $e');
+      }
+    }
+
+    return result;
+  }
+
   Future<void> logout() async {
+    _preservedEmail = null;
+    _preservedPassword = null;
     role = null;
     user = null;
+    userName = null;
     roleLoading = false;
-    notifyListeners(); 
+    notifyListeners();
     await _auth.signOut();
   }
 

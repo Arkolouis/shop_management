@@ -164,6 +164,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           label: "Email Address",
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.done,
+          decoration: const InputDecoration(labelText: "Email Address"),
         ),
         const SizedBox(height: 24),
         SizedBox(
@@ -203,6 +204,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           label: "Reset Code",
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
+          decoration: const InputDecoration(labelText: "Reset Code"),
         ),
         const SizedBox(height: 16),
         AppTextField(
@@ -211,6 +213,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           obscure: true,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
+          decoration: const InputDecoration(labelText: "New Password"),
         ),
         const SizedBox(height: 16),
         AppTextField(
@@ -219,6 +222,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           obscure: true,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
+          decoration: const InputDecoration(labelText: "Confirm Password"),
         ),
         const SizedBox(height: 24),
         SizedBox(

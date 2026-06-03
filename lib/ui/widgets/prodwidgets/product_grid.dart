@@ -5,7 +5,9 @@ import 'package:shop_management/core/models/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductGrid extends StatelessWidget {
-  const ProductGrid({super.key});
+  final String searchQuery;
+
+  const ProductGrid({super.key, required this.searchQuery});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,27 @@ class ProductGrid extends StatelessWidget {
           return const Center(child: Text("No products available"));
         }
 
-        final docs = snapshot.data!.docs;
+        /// ✅ Convert Firestore docs → Product model FIRST
+        final products = snapshot.data!.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+
+          return Product(
+            id: doc.id,
+            name: data['name'] ?? 'No name',
+            price: (data['price'] ?? 0).toDouble(),
+            stock: (data['stock'] ?? 0) as int,
+            imageAsset: data['imageAsset'] as String?,
+          );
+        }).toList();
+
+        /// 🔍 SEARCH FILTER (FIXED)
+        final filtered = products.where((p) {
+          return p.name.toLowerCase().contains(searchQuery.toLowerCase());
+        }).toList();
+
+        if (filtered.isEmpty) {
+          return const Center(child: Text("No products found"));
+        }
 
         return GridView.builder(
           padding: const EdgeInsets.all(16),
@@ -30,18 +52,9 @@ class ProductGrid extends StatelessWidget {
             mainAxisSpacing: 16,
             childAspectRatio: 0.75,
           ),
-          itemCount: docs.length,
+          itemCount: filtered.length,
           itemBuilder: (context, index) {
-            final doc = docs[index];
-            final data = doc.data() as Map<String, dynamic>;
-
-            final product = Product(
-              id: doc.id,
-              name: data['name'] ?? 'No name',
-              price: (data['price'] ?? 0).toDouble(),
-              stock: (data['stock'] ?? 0) as int,
-              imageAsset: data['imageAsset'] as String?,
-            );
+            final product = filtered[index];
 
             return _ProductCard(product: product);
           },
@@ -66,13 +79,6 @@ class _ProductCard extends StatelessWidget {
           : () {
               try {
                 salesController.addToCart(product);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("${product.name} added to cart"),
-                    duration: const Duration(seconds: 1),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

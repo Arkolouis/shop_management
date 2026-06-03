@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_management/controllers/sales_controller.dart';
+import 'package:shop_management/core/utils/formatters.dart';
 import 'package:shop_management/ui/pages/reciept/reciept_page.dart';
 
 class CartPanel extends StatefulWidget {
@@ -48,7 +49,7 @@ class _CartPanelState extends State<CartPanel> {
             },
           ),
         ),
-        Text("Total: GHS ${controller.total.toStringAsFixed(2)}"),
+        Text("Total: GHS ${formatMoney(controller.total)}"),
         const SizedBox(height: 10),
         ElevatedButton(
           onPressed: controller.isProcessing
@@ -60,11 +61,16 @@ class _CartPanelState extends State<CartPanel> {
                     if (!context.mounted) return;
 
                     if (context.mounted) {
-                      Navigator.push(
+                      showReceiptDialog(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => ReceiptPage(receipt: receipt),
-                        ),
+                        receipt,
+                        onPaymentConfirmed: () {
+                          // ✅ anything you want to happen after payment
+                          // e.g. print receipt, update payment status in Firestore
+                          debugPrint(
+                            "✅ Payment confirmed for receipt: ${receipt['id']}",
+                          );
+                        },
                       );
                     }
                   } catch (e) {

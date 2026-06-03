@@ -7,11 +7,11 @@ import 'package:shop_management/ui/pages/dashboard/dashboard_page.dart';
 import 'package:shop_management/ui/pages/login/login_page.dart';
 import 'package:shop_management/ui/pages/reports/reports_page.dart';
 import 'package:shop_management/ui/pages/salespage/sales_page.dart';
+import 'package:shop_management/ui/shell/app_shell.dart';
 
 GoRouter createRouter(AuthController authController) {
   return GoRouter(
     initialLocation: '/',
-
     refreshListenable: authController,
 
     redirect: (context, state) {
@@ -19,21 +19,12 @@ GoRouter createRouter(AuthController authController) {
       final user = auth.user;
       final role = auth.role;
       final roleLoading = auth.roleLoading;
-
       final location = state.uri.toString();
       final isLogin = location == '/';
 
-      if (user == null) {
-        return isLogin ? null : '/';
-      }
-
-      if (roleLoading) {
-        return isLogin ? null : '/';
-      }
-      if (role == null) {
-        return isLogin ? null : '/';
-      }
-
+      if (user == null) return isLogin ? null : '/';
+      if (roleLoading) return isLogin ? null : '/';
+      if (role == null) return isLogin ? null : '/';
       if (isLogin) return '/dashboard';
 
       if (location == '/products' && role == 'staff') {
@@ -42,8 +33,9 @@ GoRouter createRouter(AuthController authController) {
       if (location == '/reports' && role == 'staff') {
         return '/dashboard';
       }
-
-      if (location == '/admin-users' && role != 'admin') {
+      if (location == '/admin-users' &&
+          role != 'admin' &&
+          role != 'manager') {
         return '/dashboard';
       }
 
@@ -51,23 +43,55 @@ GoRouter createRouter(AuthController authController) {
     },
 
     routes: [
-      GoRoute(path: '/', builder: (context, state) => LoginPage()),
+      // ✅ login — no shell
+      GoRoute(
+        path: '/',
+        builder: (context, state) => LoginPage(),
+      ),
+
+      // ✅ all other pages wrapped in AppShell
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const DashboardPage(),
+        builder: (context, state) => AppShell(
+          currentRoute: '/dashboard',
+          child: const DashboardBody(),
+        ),
       ),
+
       GoRoute(
         path: '/products',
-        builder: (context, state) => const ProductsPage(),
+        builder: (context, state) {
+          final filter = state.uri.queryParameters['filter'];
+          return AppShell(
+            currentRoute: '/products',
+            child: ProductsPage(
+                showLowStockOnly: filter == 'lowstock'),
+          );
+        },
       ),
-      GoRoute(path: '/sales', builder: (context, state) => const SalesPage()),
+
       GoRoute(
-        path: '/admin-users',
-        builder: (context, state) => const AdminUsersPage(),
+        path: '/sales',
+        builder: (context, state) => AppShell(
+          currentRoute: '/sales',
+          child: const SalesBody(),
+        ),
       ),
+
       GoRoute(
         path: '/reports',
-        builder: (context, state) => const ReportsPage(),
+        builder: (context, state) => AppShell(
+          currentRoute: '/reports',
+          child: const ReportsBody(),
+        ),
+      ),
+
+      GoRoute(
+        path: '/admin-users',
+        builder: (context, state) => AppShell(
+          currentRoute: '/admin-users',
+          child: const AdminUsersBody(),
+        ),
       ),
     ],
   );

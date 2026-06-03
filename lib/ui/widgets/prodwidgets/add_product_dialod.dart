@@ -22,14 +22,12 @@ class _AddProductDialog extends StatefulWidget {
 
 class _AddProductDialogState extends State<_AddProductDialog> {
   final _formKey = GlobalKey<FormState>();
-  String _selectedImage = ''; // ✅ tracks which image is selected
+  String _selectedImage = '';
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ProductController>();
-    // add this at the top of build()
-    debugPrint("🖼️ Images available: ${productImages.length}");
-    debugPrint("🖼️ First image: ${productImages.first}");
+
     return AlertDialog(
       title: const Text("Add Product"),
       content: SizedBox(

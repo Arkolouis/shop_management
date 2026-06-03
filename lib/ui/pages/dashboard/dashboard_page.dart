@@ -3,15 +3,19 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_management/controllers/auth_controller.dart';
 import 'package:shop_management/controllers/dashboard_controller.dart';
+import 'package:shop_management/core/utils/formatters.dart';
+import 'package:shop_management/ui/pages/dashboard/staff_dashboard_page.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+class DashboardBody extends StatefulWidget {
+  const DashboardBody({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardBody> createState() => _DashboardBodyState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardBodyState extends State<DashboardBody> {
+  int _selectedPeriod = 0;
+
   @override
   void initState() {
     super.initState();
@@ -28,246 +32,116 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final dashboard = context.watch<DashboardController>();
     final auth = context.watch<AuthController>();
-    final role = auth.role;
+    final role = auth.role ?? '';
 
-    if (auth.user == null) {
-      return const Scaffold(body: Center(child: Text("Not logged in")));
+    if (dashboard.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    if (auth.roleLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (role == null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("No role assigned to your account."),
-              TextButton(
-                onPressed: () => context.read<AuthController>().logout(),
-                child: const Text("Logout"),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dashboard"),
-        actions: [
-          // ✅ live indicator — shows green dot when streams are active
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: dashboard.isInitialized
-                        ? Colors.green
-                        : Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  dashboard.isInitialized ? "Live" : "Connecting...",
-                  style: TextStyle(
-                    color: dashboard.isInitialized
-                        ? Colors.green
-                        : Colors.orange,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            // ── Drawer header ──
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Icon(Icons.store, color: Colors.white, size: 36),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Shop Management",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  // ✅ show username if available
-                  Text(
-                    auth.nameController.text.toUpperCase(),
-                    style: const TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                  Text(
-                    role.toUpperCase(),
-                    style: const TextStyle(color: Colors.white54, fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.dashboard),
-              title: const Text("Dashboard"),
-              onTap: () => context.go('/dashboard'),
-            ),
-
-            if (role != "staff")
-              ListTile(
-                leading: const Icon(Icons.inventory_2),
-                title: const Text("Products"),
-                onTap: () => context.go('/products'),
-              ),
-
-            ListTile(
-              leading: const Icon(Icons.point_of_sale),
-              title: const Text("Sales"),
-              onTap: () => context.go('/sales'),
-            ),
-
-            if (role == "admin" || role == "manager")
-              ListTile(
-                leading: const Icon(Icons.bar_chart),
-                title: const Text("Reports"),
-                onTap: () => context.go('/reports'),
-              ),
-
-            if (role == "admin")
-              ListTile(
-                leading: const Icon(Icons.people),
-                title: const Text("User Management"),
-                onTap: () => context.go('/admin-users'),
-              ),
-
-            const Divider(),
-
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text("Logout", style: TextStyle(color: Colors.red)),
-              onTap: () async {
-                context.read<DashboardController>().reset();
-                await context.read<AuthController>().logout();
-                if (context.mounted) context.go('/');
-              },
-            ),
-          ],
-        ),
-      ),
-
-      body: RefreshIndicator(
-        onRefresh: () => context.read<DashboardController>().refresh(),
-        child: dashboard.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: _buildRoleUI(role, dashboard),
-              ),
-      ),
+    return RefreshIndicator(
+      onRefresh: () => context.read<DashboardController>().refresh(),
+      child: _buildRoleUI(role, dashboard),
     );
   }
 
+  // ✅ keep all your existing _adminManagerDashboard,
+  // _staffDashboard, _card, _periodTab etc exactly as they are
+  // just remove the Scaffold wrapper
   Widget _buildRoleUI(String role, DashboardController c) {
     switch (role) {
       case "admin":
-        return _stats(c, showReports: true);
       case "manager":
-        return _stats(c, showReports: true);
+        return _adminManagerDashboard(c);
       case "staff":
-        return const Center(
-          child: Padding(
-            padding: EdgeInsets.all(40),
-            child: Text(
-              "Go to Sales",
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-          ),
-        );
+        return const StaffDashboardPage();
       default:
         return const Center(child: Text("No role assigned"));
     }
   }
 
-  Widget _stats(DashboardController c, {required bool showReports}) {
-    return Padding(
+  Widget _adminManagerDashboard(DashboardController c) {
+    final sales = [
+      c.todaySales,
+      c.weeklySales,
+      c.monthlySales,
+      c.yearlySales,
+      c.monthlySales,
+      c.yearlySales,
+    ][_selectedPeriod];
+
+    final transactions = [
+      c.totalSalesToday,
+      c.weeklyTransactions,
+      c.monthlyTransactions,
+      c.yearlyTransactions,
+      c.weeklyTransactions,
+      c.yearlyTransactions,
+    ][_selectedPeriod];
+
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header row ──
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Overview",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              // ✅ last updated time
-              Text(
-                "Updates automatically",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
+          const Text(
+            "Overview",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 16),
+
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                _periodTab("Today", 0),
+                _periodTab("Weekly", 1),
+                _periodTab("Monthly", 2),
+                _periodTab("Yearly", 3),
+              ],
+            ),
           ),
 
           const SizedBox(height: 20),
 
-          // ── Stat cards ──
           Wrap(
             spacing: 20,
             runSpacing: 20,
             children: [
               _card(
-                "Today's Sales",
-                "₵${c.todaySales.toStringAsFixed(2)}",
+                "Total Sales",
+                formatMoney(sales),
                 Icons.attach_money,
                 Colors.green,
+              ),
+              _card(
+                "Transactions",
+                "$transactions",
+                Icons.receipt_long,
+                Colors.blue,
               ),
               _card(
                 "Products",
                 "${c.totalProducts}",
                 Icons.inventory_2,
-                Colors.blue,
+                Colors.indigo,
               ),
               _card(
                 "Low Stock",
                 "${c.lowStock}",
                 Icons.warning_amber,
-                // ✅ card turns red if there are low stock items
                 c.lowStock > 0 ? Colors.red : Colors.orange,
-              ),
-              _card(
-                "Transactions",
-                "${c.totalSalesToday}",
-                Icons.receipt,
-                Colors.purple,
               ),
             ],
           ),
 
-          // ✅ low stock warning banner
+          const SizedBox(height: 24),
+
           if (c.lowStock > 0) ...[
-            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -281,32 +155,181 @@ class _DashboardPageState extends State<DashboardPage> {
                   const Icon(Icons.warning_amber, color: Colors.red, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    "${c.lowStock} product${c.lowStock > 1 ? 's are' : ' is'} running low on stock",
+                    "${c.lowStock} product${c.lowStock > 1 ? 's are' : ' is'} running low",
                     style: const TextStyle(color: Colors.red),
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: () => context.go('/products'),
-                    child: const Text("View Products"),
+                    onPressed: () => context.go('/products?filter=lowstock'),
+
+                    child: const Text("View"),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 24),
           ],
 
-          if (showReports) ...[
-            const SizedBox(height: 30),
+          if (c.topProducts.isNotEmpty) ...[
             const Text(
-              "Quick Actions",
+              "Most Patronised Products",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () => context.go('/reports'),
-              icon: const Icon(Icons.bar_chart),
-              label: const Text("View Full Reports"),
+            const SizedBox(height: 4),
+            Text(
+              "Based on this week's sales",
+              style: TextStyle(color: Colors.grey[500], fontSize: 12),
             ),
+            const SizedBox(height: 12),
+            ...c.topProducts.asMap().entries.map((entry) {
+              final index = entry.key;
+              final product = entry.value;
+              return _productRankTile(
+                rank: index + 1,
+                name: product.key,
+                qty: product.value,
+                color: Colors.green,
+                isTop: true,
+              );
+            }),
+            const SizedBox(height: 24),
           ],
+
+          if (c.leastProducts.isNotEmpty) ...[
+            const Text(
+              "Least Patronised Products",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Based on this week's sales",
+              style: TextStyle(color: Colors.grey[500], fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            ...c.leastProducts.asMap().entries.map((entry) {
+              final index = entry.key;
+              final product = entry.value;
+              return _productRankTile(
+                rank: index + 1,
+                name: product.key,
+                qty: product.value,
+                color: Colors.red,
+                isTop: false,
+              );
+            }),
+            const SizedBox(height: 24),
+          ],
+
+          const Text(
+            "Quick Actions",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => context.go('/reports'),
+                icon: const Icon(Icons.bar_chart),
+                label: const Text("View Reports"),
+              ),
+              ElevatedButton.icon(
+                onPressed: () => context.go('/products'),
+                icon: const Icon(Icons.inventory_2),
+                label: const Text("Manage Products"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _periodTab(String label, int index) {
+    final isSelected = _selectedPeriod == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedPeriod = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blue : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.grey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _productRankTile({
+    required int rank,
+    required String name,
+    required int qty,
+    required Color color,
+    required bool isTop,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+      ),
+      child: Row(
+        children: [
+          // rank badge
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: rank == 1 && isTop
+                  ? Colors.amber
+                  : color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                "$rank",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: rank == 1 && isTop ? Colors.white : color,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              name,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              "$qty sold",
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
         ],
       ),
     );

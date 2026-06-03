@@ -11,7 +11,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  String role = 'cashier'; // default role
+  String role = 'cashier';
 
   @override
   Widget build(BuildContext context) {
@@ -29,37 +29,40 @@ class _SignupPageState extends State<SignupPage> {
                 "Create an account",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
+              
               const SizedBox(height: 24),
 
-              /// 👤 Name
               AppTextField(
                 label: "Full Name",
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
-                controller: controller.nameController,
+                controller: controller.nameController, decoration: const InputDecoration(
+                  labelText: "Full Name",
+                ),
               ),
               const SizedBox(height: 16),
 
-              /// 📧 Email (THIS is where TextInputType.emailAddress is used)
               AppTextField(
                 label: "Email",
                 controller: controller.emailController,
-                keyboardType: TextInputType.emailAddress, // ✅ correct usage
-                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next, decoration: const InputDecoration(
+                  labelText: "Email Address",
+                ),
               ),
               const SizedBox(height: 16),
 
-              /// 🔒 Password
               AppTextField(
                 label: "Password",
                 controller: controller.passwordController,
                 obscure: true,
                 textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.text, decoration: const InputDecoration(
+                  labelText: "Password",
+                ),
               ),
               const SizedBox(height: 16),
 
-              /// 👑 Role Selector (IMPORTANT for your system)
               DropdownButtonFormField<String>(
                 initialValue: role,
                 decoration: const InputDecoration(
@@ -79,7 +82,6 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 24),
 
-              /// 🔘 Signup Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
