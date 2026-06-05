@@ -1,5 +1,5 @@
 class UsersRoles {
   static const admin = 'admin';
   static const manager = 'manager';
-  static const cashier = 'cashier';
+  static const staff = 'staff';
 }

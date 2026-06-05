@@ -58,7 +58,6 @@ class ReceiptDialog extends StatelessWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      // ✅ constrain dialog to 90% of screen height
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: 480,
@@ -67,7 +66,6 @@ class ReceiptDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Header — fixed at top ──
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -101,7 +99,6 @@ class ReceiptDialog extends StatelessWidget {
               ),
             ),
 
-            // ── Scrollable middle section ──
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -110,7 +107,6 @@ class ReceiptDialog extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // ── Items list ──
                     ...items.asMap().entries.map((entry) {
                       final index = entry.key;
                       final item = entry.value;
@@ -159,7 +155,6 @@ class ReceiptDialog extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    // ── Total ──
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
@@ -193,7 +188,6 @@ class ReceiptDialog extends StatelessWidget {
               ),
             ),
 
-            // ── Buttons — fixed at bottom ──
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
               child: Column(

@@ -290,9 +290,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ────────────────────────────────────────
-  // STEP — Select Mobile Money network
-  // ────────────────────────────────────────
+
   Widget _stepSelectNetwork() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,9 +339,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ────────────────────────────────────────
-  // STEP — Enter phone number
-  // ────────────────────────────────────────
   Widget _stepEnterPhone() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,7 +366,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 8),
 
-        // ✅ amount display
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
@@ -406,9 +400,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ────────────────────────────────────────
-  // STEP — Waiting for approval
-  // ────────────────────────────────────────
   Widget _stepWaitingApproval() {
     return Column(
       children: [
@@ -430,7 +421,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 12),
 
-        // ✅ amount reminder
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
@@ -471,16 +461,12 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ────────────────────────────────────────
-  // STEP — Cash received
-  // ────────────────────────────────────────
   Widget _stepCashReceived() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
 
-        // ✅ amount due
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -507,7 +493,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 16),
 
-        // ✅ cash received input
+        //cash received 
         TextField(
           controller: _cashCtrl,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -528,7 +514,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 12),
 
-        // ✅ change calculation
+        //change 
         if (_cashReceived > 0)
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -585,9 +571,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ────────────────────────────────────────
-  // STEP — Select card type
-  // ────────────────────────────────────────
   Widget _stepSelectCardType() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -635,10 +618,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
-
-  // ────────────────────────────────────────
-  // STEP — Tap or swipe card
-  // ────────────────────────────────────────
   Widget _stepTapCard() {
     return Column(
       children: [
@@ -696,10 +675,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
-
-  // ────────────────────────────────────────
-  // STEP — Success
-  // ────────────────────────────────────────
   Widget _stepSuccess() {
     return Column(
       children: [
@@ -760,11 +735,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
-
-  // ────────────────────────────────────────
-  // Shared widgets
-  // ────────────────────────────────────────
-
   Widget _methodOption({
     required IconData icon,
     required Color color,

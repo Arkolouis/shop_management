@@ -18,7 +18,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: authController), // ✅ same instance
+        ChangeNotifierProvider.value(value: authController),
         ChangeNotifierProvider(create: (_) => ProductController()),
         ChangeNotifierProvider(create: (_) => SalesController()),
         ChangeNotifierProvider(create: (_) => DashboardController()),

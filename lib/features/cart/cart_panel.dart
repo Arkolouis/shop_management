@@ -65,8 +65,7 @@ class _CartPanelState extends State<CartPanel> {
                         context,
                         receipt,
                         onPaymentConfirmed: () {
-                          // ✅ anything you want to happen after payment
-                          // e.g. print receipt, update payment status in Firestore
+                       
                           debugPrint(
                             "✅ Payment confirmed for receipt: ${receipt['id']}",
                           );

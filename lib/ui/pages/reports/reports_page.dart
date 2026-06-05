@@ -42,10 +42,8 @@ class _ReportsBodyState extends State<ReportsBody> {
                     .where((s) => s.paymentMethod == _filterMethod)
                     .toList();
 
-          // ── totals ──
           final totalRevenue = sales.fold(0.0, (sum, sale) => sum + sale.total);
 
-          // ── payment method breakdown ──
           final cashSales = allSales
               .where((s) => s.paymentMethod == 'cash')
               .fold(0.0, (sum, s) => sum + s.total);
@@ -75,7 +73,6 @@ class _ReportsBodyState extends State<ReportsBody> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Summary cards ──
               Row(
                 children: [
                   Expanded(
@@ -100,7 +97,6 @@ class _ReportsBodyState extends State<ReportsBody> {
 
               const SizedBox(height: 20),
 
-              // ── Payment method breakdown ──
               const Text(
                 "Payment Breakdown",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -108,7 +104,6 @@ class _ReportsBodyState extends State<ReportsBody> {
 
               const SizedBox(height: 10),
 
-              // ✅ 4 payment method cards
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -174,7 +169,6 @@ class _ReportsBodyState extends State<ReportsBody> {
 
               const SizedBox(height: 16),
 
-              // ── Filter label ──
               if (_filterMethod != 'all')
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -210,7 +204,6 @@ class _ReportsBodyState extends State<ReportsBody> {
 
               const SizedBox(height: 10),
 
-              // ── Sales list ──
               Expanded(
                 child: sales.isEmpty
                     ? Center(

@@ -18,7 +18,6 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   late final SidebarXController _sidebarController;
 
-  // ── Route to sidebar index map ──
   final _routes = [
     '/dashboard',
     '/products',
@@ -101,7 +100,7 @@ class _AppShellState extends State<AppShell> {
       theme: SidebarXTheme(
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E293B), // dark blue-grey
+          color: const Color(0xFF1E293B),
           borderRadius: BorderRadius.circular(20),
         ),
         textStyle: const TextStyle(color: Colors.white70, fontSize: 14),
@@ -232,6 +231,8 @@ class _AppShellState extends State<AppShell> {
         const SidebarXItem(icon: Icons.inventory_2, label: 'Products'),
       const SidebarXItem(icon: Icons.point_of_sale, label: 'Sales'),
       if (role == 'admin' || role == 'manager')
+        const SidebarXItem(icon: Icons.shopping_bag_outlined, label: 'Orders'),
+      if (role == 'admin' || role == 'manager')
         const SidebarXItem(icon: Icons.bar_chart, label: 'Reports'),
       if (role == 'admin' || role == 'manager')
         const SidebarXItem(icon: Icons.people, label: 'User Management'),
@@ -244,6 +245,7 @@ class _AppShellState extends State<AppShell> {
       '/dashboard',
       if (role != 'staff') '/products',
       '/sales',
+      if (role == 'admin' || role == 'manager') '/orders',
       if (role == 'admin' || role == 'manager') '/reports',
       if (role == 'admin' || role == 'manager') '/admin-users',
     ];
@@ -301,26 +303,6 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      auth.userName ?? 'User',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                    Text(
-                      role.toUpperCase(),
-                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 4),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
               ],
             ),
             itemBuilder: (_) => <PopupMenuEntry<String>>[
@@ -333,7 +315,28 @@ class _AppShellState extends State<AppShell> {
                     Text("Profile"),
                   ],
                 ),
-                onTap: () {},
+                onTap: () {
+                  const SizedBox(width: 8);
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        auth.userName ?? 'User',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        role.toUpperCase(),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                      ),
+                    ],
+                  );
+                  const SizedBox(width: 4);
+                  const Icon(Icons.keyboard_arrow_down, color: Colors.grey);
+                },
               ),
               PopupMenuItem<String>(
                 value: 'logout',
@@ -369,6 +372,8 @@ class _AppShellState extends State<AppShell> {
         return 'Reports';
       case '/admin-users':
         return 'User Management';
+      case '/orders':
+        return 'Orders';
       default:
         return 'Shop Management';
     }

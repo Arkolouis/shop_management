@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_management/controllers/auth_controller.dart';
 import 'package:shop_management/ui/pages/admin/admin_user_page.dart';
+import 'package:shop_management/ui/pages/orders/orders_page.dart';
 import 'package:shop_management/ui/pages/product/products_page.dart';
 import 'package:shop_management/ui/pages/dashboard/dashboard_page.dart';
 import 'package:shop_management/ui/pages/login/login_page.dart';
@@ -33,9 +34,7 @@ GoRouter createRouter(AuthController authController) {
       if (location == '/reports' && role == 'staff') {
         return '/dashboard';
       }
-      if (location == '/admin-users' &&
-          role != 'admin' &&
-          role != 'manager') {
+      if (location == '/admin-users' && role != 'admin' && role != 'manager') {
         return '/dashboard';
       }
 
@@ -43,19 +42,12 @@ GoRouter createRouter(AuthController authController) {
     },
 
     routes: [
-      // ✅ login — no shell
-      GoRoute(
-        path: '/',
-        builder: (context, state) => LoginPage(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => LoginPage()),
 
-      // ✅ all other pages wrapped in AppShell
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => AppShell(
-          currentRoute: '/dashboard',
-          child: const DashboardBody(),
-        ),
+        builder: (context, state) =>
+            AppShell(currentRoute: '/dashboard', child: const DashboardBody()),
       ),
 
       GoRoute(
@@ -64,26 +56,25 @@ GoRouter createRouter(AuthController authController) {
           final filter = state.uri.queryParameters['filter'];
           return AppShell(
             currentRoute: '/products',
-            child: ProductsPage(
-                showLowStockOnly: filter == 'lowstock'),
+            child: ProductsPage(showLowStockOnly: filter == 'lowstock'),
           );
         },
       ),
-
+      // GoRoute(
+      //   path: '/orders',
+      //   builder: (context, state) =>
+      //       AppShell(currentRoute: '/orders', child: const OrdersPage()),
+      // ),
       GoRoute(
         path: '/sales',
-        builder: (context, state) => AppShell(
-          currentRoute: '/sales',
-          child: const SalesBody(),
-        ),
+        builder: (context, state) =>
+            AppShell(currentRoute: '/sales', child: const SalesBody()),
       ),
 
       GoRoute(
         path: '/reports',
-        builder: (context, state) => AppShell(
-          currentRoute: '/reports',
-          child: const ReportsBody(),
-        ),
+        builder: (context, state) =>
+            AppShell(currentRoute: '/reports', child: const ReportsBody()),
       ),
 
       GoRoute(
