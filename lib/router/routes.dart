@@ -60,11 +60,11 @@ GoRouter createRouter(AuthController authController) {
           );
         },
       ),
-      // GoRoute(
-      //   path: '/orders',
-      //   builder: (context, state) =>
-      //       AppShell(currentRoute: '/orders', child: const OrdersPage()),
-      // ),
+      GoRoute(
+        path: '/orders',
+        builder: (context, state) =>
+            AppShell(currentRoute: '/orders', child: const OrdersPage()),
+      ),
       GoRoute(
         path: '/sales',
         builder: (context, state) =>
