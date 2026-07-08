@@ -22,7 +22,6 @@ class ProductGrid extends StatelessWidget {
           return const Center(child: Text("No products available"));
         }
 
-        /// ✅ Convert Firestore docs → Product model FIRST
         final products = snapshot.data!.docs.map((doc) {
           final data = doc.data() as Map<String, dynamic>;
 
@@ -35,7 +34,6 @@ class ProductGrid extends StatelessWidget {
           );
         }).toList();
 
-        /// 🔍 SEARCH FILTER (FIXED)
         final filtered = products.where((p) {
           return p.name.toLowerCase().contains(searchQuery.toLowerCase());
         }).toList();

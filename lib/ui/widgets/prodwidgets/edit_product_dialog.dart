@@ -174,7 +174,6 @@ class _EditProductDialogState extends State<_EditProductDialog> {
 
                 const SizedBox(height: 12),
 
-                // ── Text fields ──
                 TextFormField(
                   controller: _nameCtrl,
                   decoration: const InputDecoration(labelText: "Name"),

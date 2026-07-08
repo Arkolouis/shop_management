@@ -2,23 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shop_management/core/utils/formatters.dart';
 
-// ── Payment steps enum ──
 enum PaymentStep {
   selectMethod,
-  // Mobile Money steps
   selectNetwork,
   enterPhone,
   waitingApproval,
-  // Cash steps
   enterCashReceived,
-  // Bank Card steps
   selectCardType,
   tapCard,
-  // Shared
+
   success,
 }
 
-// ── Show the dialog ──
 void showPaymentFlowDialog(
   BuildContext context, {
   required double totalAmount,
@@ -49,22 +44,18 @@ class PaymentFlowDialog extends StatefulWidget {
 }
 
 class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
-  // ── Step history stack for back navigation ──
   final List<PaymentStep> _history = [PaymentStep.selectMethod];
   PaymentStep get _currentStep => _history.last;
 
-  // ── Selected values ──
   String _selectedMethod = '';
   String _selectedNetwork = '';
   String _selectedCardType = '';
   String _phoneNumber = '';
   double _cashReceived = 0;
 
-  // ── Controllers ──
   final _phoneCtrl = TextEditingController();
   final _cashCtrl = TextEditingController();
 
-  // ── Transition direction ──
   bool _goingForward = true;
 
   @override
@@ -108,7 +99,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
             // ── Header ──
             _buildHeader(),
 
-            // ── Animated step content ──
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, animation) {
@@ -140,7 +130,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     );
   }
 
-  // ── Header ──
   Widget _buildHeader() {
     final isSuccess = _currentStep == PaymentStep.success;
 
@@ -216,7 +205,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     }
   }
 
-  // ── Step builder ──
   Widget _buildStep() {
     switch (_currentStep) {
       case PaymentStep.selectMethod:
@@ -238,9 +226,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
     }
   }
 
-  // ────────────────────────────────────────
-  // STEP 1 — Select payment method
-  // ────────────────────────────────────────
   Widget _stepSelectMethod() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,7 +274,6 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
-
 
   Widget _stepSelectNetwork() {
     return Column(
@@ -493,7 +477,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 16),
 
-        //cash received 
+        //cash received
         TextField(
           controller: _cashCtrl,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -514,7 +498,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
 
         const SizedBox(height: 12),
 
-        //change 
+        //change
         if (_cashReceived > 0)
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
@@ -618,6 +602,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
+
   Widget _stepTapCard() {
     return Column(
       children: [
@@ -675,6 +660,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
+
   Widget _stepSuccess() {
     return Column(
       children: [
@@ -735,6 +721,7 @@ class _PaymentFlowDialogState extends State<PaymentFlowDialog> {
       ],
     );
   }
+
   Widget _methodOption({
     required IconData icon,
     required Color color,
