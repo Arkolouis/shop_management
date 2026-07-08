@@ -109,7 +109,8 @@ class _ProductCard extends StatelessWidget {
                             product.imageAsset!.isNotEmpty
                         ? Image.asset(
                             product.imageAsset!,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
                             width: double.infinity,
                             height: double.infinity,
                             errorBuilder: (context, error, stackTrace) =>

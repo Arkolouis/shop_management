@@ -51,7 +51,8 @@ class _AddProductDialogState extends State<_AddProductDialog> {
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
                             _selectedImage,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
                             width: double.infinity,
                             height: double.infinity,
                             errorBuilder: (context, error, stackTrace) =>
@@ -127,7 +128,8 @@ class _AddProductDialogState extends State<_AddProductDialog> {
                             borderRadius: BorderRadius.circular(7),
                             child: Image.asset(
                               imagePath,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
+                              alignment: Alignment.center,
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
                                     color: Colors.grey[200],

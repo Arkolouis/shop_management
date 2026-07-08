@@ -144,7 +144,8 @@ class _ProductsPageState extends State<ProductsPage> {
                                       ? Image.asset(
                                           product.imageAsset!,
                                           width: double.infinity,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.contain,
+                                          alignment: Alignment.center,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
                                                   const Center(
